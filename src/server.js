@@ -2,7 +2,8 @@
 const http = require("http");
 const cache = require("./cache");
 
-const ORIGIN = "https://dummyjson.com";
+const ORIGIN = process.env.ORIGIN || "https://dummyjson.com";
+const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(async (req, res) => {
     console.log(`Incoming request: ${req.method} ${req.url}`);
@@ -68,6 +69,6 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-server.listen(3000, () => {
-    console.log("Proxy running at http://localhost:3000");
+server.listen(PORT, () => {
+    console.log(`Proxy running at http://localhost:${PORT}`);
 });
