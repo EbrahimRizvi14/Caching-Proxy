@@ -8,6 +8,20 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(async (req, res) => {
     console.log(`Incoming request: ${req.method} ${req.url}`);
 
+        if (req.method === "POST" && req.url === "/__clear-cache") {
+        cache.clear();
+
+        res.writeHead(200, {
+            "Content-Type": "application/json"
+        });
+
+        res.end(JSON.stringify({
+            message: "Cache cleared successfully"
+        }));    
+
+        return; 
+    }
+
     // Check if the response is already cached
     const cacheKey = `${req.method}:${req.url}`;
 
@@ -69,6 +83,6 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "127.0.0.1", () => {
     console.log(`Proxy running at http://localhost:${PORT}`);
 });
