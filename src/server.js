@@ -46,9 +46,30 @@ const server = http.createServer(async (req, res) => {
     try {
         const originUrl = new URL(req.url, ORIGIN);
 
+        const hasBody = !["GET", "HEAD"].includes(req.method);
+
+        const requestHeaders = new Headers(req.headers);
+
+        // Remove headers that belong to the local connection.
+        for (const header of [
+            "host",
+            "connection",
+            "keep-alive",
+            "proxy-connection",
+            "transfer-encoding",
+            "upgrade",
+            "expect"
+        ]) {
+            requestHeaders.delete(header);
+        }
+
         const response = await fetch(originUrl, {
             method: req.method,
-            headers: req.headers
+            headers: requestHeaders,
+            ...(hasBody ? {
+                body: req,
+                duplex: "half"
+            } : {})
         });
 
         const data = Buffer.from(await response.arrayBuffer());
@@ -58,7 +79,7 @@ const server = http.createServer(async (req, res) => {
         };
 
         // Save the response in the cache
-        if (req.method === "GET") {
+        if (req.method === "GET" && response.ok) {
             cache.set(cacheKey, {
                 status: response.status,
                 headers: headers,

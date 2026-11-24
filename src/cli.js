@@ -5,18 +5,75 @@ let origin = "https://dummyjson.com";
 
 let clearCache = false;
 
+const seenArgs = new Set();
+
 for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--port") {
-        port = Number(args[i + 1]);
+    const arg = args[i];
+
+    // Check for unknown arguments
+    if (!["--port", "--origin", "--clear-cache"].includes(arg)) {
+        console.error(`Error: Unknown argument "${arg}".`);
+        process.exit(1);
     }
 
-    if (args[i] === "--origin") {
-        origin = args[i + 1];
+    // Check for duplicate arguments
+    if (seenArgs.has(arg)) {
+        console.error(`Error: "${arg}" was provided more than once.`);
+        process.exit(1);
     }
 
-    if (args[i] === "--clear-cache") {
+    seenArgs.add(arg);
+
+    // Handle clear-cache
+    if (arg === "--clear-cache") {
         clearCache = true;
+        continue;
     }
+
+    // Check whether the argument has a value
+    const value = args[i + 1];
+
+    if (!value || value.startsWith("--")) {
+        console.error(`Error: "${arg}" requires a value.`);
+        process.exit(1);
+    }
+
+    // Handle port
+    if (arg === "--port") {
+        if (!/^\d+$/.test(value)) {
+            console.error("Error: Port must be a valid number.");
+            process.exit(1);
+        }
+
+        port = Number(value);
+
+        if (port < 1 || port > 65535) {
+            console.error("Error: Port must be between 1 and 65535.");
+            process.exit(1);
+        }
+    }
+
+    // Handle origin
+    if (arg === "--origin") {
+        try {
+            const parsedUrl = new URL(value);
+
+            if (
+                !["http:", "https:"].includes(parsedUrl.protocol) ||
+                !parsedUrl.hostname
+            ) {
+                throw new Error();
+            }
+
+            origin = parsedUrl.origin;
+
+        } catch {
+            console.error("Error: Please provide a valid HTTP or HTTPS origin URL.");
+            process.exit(1);
+        }
+    }
+
+    i++;
 }
 
 if (clearCache) {
