@@ -10,13 +10,11 @@ const seenArgs = new Set();
 for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    // Check for unknown arguments
     if (!["--port", "--origin", "--clear-cache"].includes(arg)) {
         console.error(`Error: Unknown argument "${arg}".`);
         process.exit(1);
     }
 
-    // Check for duplicate arguments
     if (seenArgs.has(arg)) {
         console.error(`Error: "${arg}" was provided more than once.`);
         process.exit(1);
@@ -24,13 +22,11 @@ for (let i = 0; i < args.length; i++) {
 
     seenArgs.add(arg);
 
-    // Handle clear-cache
     if (arg === "--clear-cache") {
         clearCache = true;
         continue;
     }
 
-    // Check whether the argument has a value
     const value = args[i + 1];
 
     if (!value || value.startsWith("--")) {
@@ -38,7 +34,6 @@ for (let i = 0; i < args.length; i++) {
         process.exit(1);
     }
 
-    // Handle port
     if (arg === "--port") {
         if (!/^\d+$/.test(value)) {
             console.error("Error: Port must be a valid number.");
@@ -53,7 +48,6 @@ for (let i = 0; i < args.length; i++) {
         }
     }
 
-    // Handle origin
     if (arg === "--origin") {
         try {
             const parsedUrl = new URL(value);

@@ -1,7 +1,7 @@
 
 const cache = new Map();
 
-const TTL = 60 * 1000; // 60 seconds
+const TTL = 60 * 1000;
 
 function get(key) {
     const item = cache.get(key);

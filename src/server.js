@@ -22,7 +22,6 @@ const server = http.createServer(async (req, res) => {
         return; 
     }
 
-    // Check if the response is already cached
     const cacheKey = `${req.method}:${req.url}`;
 
     const cachedResponse = req.method === "GET"
@@ -50,7 +49,6 @@ const server = http.createServer(async (req, res) => {
 
         const requestHeaders = new Headers(req.headers);
 
-        // Remove headers that belong to the local connection.
         for (const header of [
             "host",
             "connection",
@@ -78,7 +76,6 @@ const server = http.createServer(async (req, res) => {
             "Content-Type": response.headers.get("content-type") || "application/octet-stream"
         };
 
-        // Save the response in the cache
         if (req.method === "GET" && response.ok) {
             cache.set(cacheKey, {
                 status: response.status,
