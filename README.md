@@ -1,8 +1,21 @@
 # Caching Proxy Server
 
-A small HTTP caching proxy built with Node.js. It forwards requests to an origin server and keeps successful `GET` responses in memory for 60 seconds. Cached responses are marked with an `X-Cache: HIT` header; responses fetched from the origin are marked `X-Cache: MISS`.
+A lightweight Node.js HTTP proxy that forwards requests, caches responses, and tracks cache hits and misses.
 
 This project was built for the [roadmap.sh Caching Server project](https://roadmap.sh/projects/caching-server).
+
+## Features
+
+- Forwards HTTP requests to a configurable origin server.
+- Caches successful `GET` responses in memory for 60 seconds.
+- Marks responses with `X-Cache: HIT` or `X-Cache: MISS`.
+- Supports clearing the running server's cache from the command line.
+
+## Tech Stack
+
+- JavaScript (CommonJS)
+- Node.js built-in HTTP server and `fetch` API
+- In-memory `Map` cache; no third-party dependencies
 
 ## Requirements
 
